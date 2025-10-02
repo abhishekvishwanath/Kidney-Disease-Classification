@@ -1,4 +1,4 @@
-# Kidney Disease Classification (MLOps)
+# Kidney Disease Classification (DLOps)
 
 This project mirrors the structure and logic of your existing Network Security MLOps project, adapted for CNN-based kidney disease image classification.
 

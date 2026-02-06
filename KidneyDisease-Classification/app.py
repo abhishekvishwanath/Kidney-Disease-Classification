@@ -74,11 +74,13 @@ async def train():
         raise CustomException(e, sys)
 
 
-def _prepare_image(file_bytes: bytes) -> np.ndarray:
+def _prepare_image(file_bytes: bytes, image_size: tuple = (224, 224)) -> np.ndarray:
     try:
+        # Use image_size from preprocessor to match model training size
+        height, width = image_size[0], image_size[1]
         with Image.open(BytesIO(file_bytes)) as img:
             img = img.convert('RGB')
-            img = img.resize((IMAGE_WIDTH, IMAGE_HEIGHT))
+            img = img.resize((width, height))
             arr = np.asarray(img, dtype=np.float32) / 255.0
         arr = np.expand_dims(arr, axis=0)
         return arr
@@ -89,17 +91,22 @@ def _prepare_image(file_bytes: bytes) -> np.ndarray:
 @app.post('/predict', tags=['predict'])
 async def predict(request: Request, file: UploadFile = File(...)):
     try:
-        contents = await file.read()
-        X = _prepare_image(contents)
-
         # Lazy import TensorFlow to avoid macOS startup issues
         import tensorflow as tf
 
-        # Optional preprocessor loading (for class name mapping)
+        # Load preprocessor first to get image size
         preproc_path = os.path.join('final_model', 'preprocessor.pkl')
         preprocessor = None
+        image_size = (224, 224, 3)  # Default fallback
+        
         if os.path.exists(preproc_path):
             preprocessor = load_object(preproc_path)
+            if hasattr(preprocessor, 'image_size'):
+                image_size = preprocessor.image_size
+        
+        # Prepare image with correct size from preprocessor
+        contents = await file.read()
+        X = _prepare_image(contents, image_size=(image_size[0], image_size[1]))
 
         # Resolve model path with fallback to kidney_cnn.h5
         model_path = os.path.join('final_model', 'model.h5')

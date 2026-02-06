@@ -25,7 +25,6 @@ DEFAULT_DATASET_ROOT = os.path.abspath(
         "..",
         "Data",
         "CT-KIDNEY-DATASET-Normal-Cyst-Tumor-Stone",
-        "CT-KIDNEY-DATASET-Normal-Cyst-Tumor-Stone",
     )
 )
 

@@ -1,0 +1,32 @@
+# Data directory - contains large image files
+Data/
+
+# OS files
+.DS_Store
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Logs
+*.log
+logs/
+
+# MLflow
+mlflow.db
+mlruns/
+
+# Artifacts (keep final_model/ but ignore training artifacts)
+artifact/
+
+# Large model files (exceed GitHub's 100MB limit)
+*.h5
+final_model/model.h5
+final_model/*.h5
